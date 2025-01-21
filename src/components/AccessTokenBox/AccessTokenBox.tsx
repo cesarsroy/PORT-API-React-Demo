@@ -1,7 +1,7 @@
 import {useState} from 'react'
-import ServerModeClient from '../services/oauth';
+import ServerModeClient from '../../services/oauth';
 import styles from './AccessTokenBox.module.css'
-import { serverClientSecret, serverclientId } from '../constants';
+import { serverClientSecret, serverclientId } from '../../constants';
 
 const AccessTokenBox = () => {
 
@@ -37,7 +37,7 @@ const AccessTokenBox = () => {
 
     function switchMessage(tokenStatus: TokenStatus) {
         const timeoutId = setTimeout(() => setAlertVisible(false),2000);
-        const fadeStylelogic = alertVisible ? "" :  styles.alertHidden
+        const fadeStylelogic = alertVisible ? "" :  [styles.alertHidden,styles.alertRemoved].join(" ")
             switch (tokenStatus) {
                     case TokenStatus.Existed :
                         return <div className={`mt-2 alert alert-primary ${fadeStylelogic}`}>Access Token retrieved from storage</div>

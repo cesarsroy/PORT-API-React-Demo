@@ -1,0 +1,12 @@
+
+.alertHidden {
+    transition:all 1s;
+    transition-behavior: allow-discrete;
+}
+
+.alertRemoved {
+    display: none;
+    opacity: 0;
+
+
+}
