@@ -10,26 +10,31 @@ const ReportCatalogForm = ({accessToken} : {accessToken: string}) => {
     const {register, formState, handleSubmit} = useForm<CatalogFormData>();
     const [catalogResponse, setCatalogResponse] = useState<InformationObject[]>([]);
     const [catalogError, setCatalogError] = useState('');
-
+    const [isLoading, setIsLoading] = useState(false)
     const onError = (err: AxiosError) => {
-        setCatalogError(err.message)
+        setCatalogError(JSON.stringify(err?.response?.data || {}))
     }
     const onCatalogSumbit = (data: CatalogFormData)=> {
         setCatalogError('')
-            console.log('The FORM has the following data')
-            console.log(data)
-            console.log('The FORM state is')
-            console.log(formState)
-            async function executeSubmit() {
-                 const _catalogResponse = await getReportCatalog(data,
-                    accessToken,
-                    onError
-                    )
-                setCatalogResponse(_catalogResponse)
-                
+        setCatalogResponse([])
+        
+        setIsLoading(true)
+        console.log('The FORM has the following data')
+        console.log(data)
+        console.log('The FORM state is')
+        console.log(formState)
+        async function executeSubmit() {
+                const _catalogResponse = await getReportCatalog(data,
+                accessToken,
+                onError
+                )
+            setCatalogResponse([..._catalogResponse])
+            setIsLoading(false)
+            
 
-            }
+        }
         executeSubmit();
+        
             
     };
     
@@ -58,22 +63,56 @@ const ReportCatalogForm = ({accessToken} : {accessToken: string}) => {
                     <input {...register('reportName')} className="form-control" type="text" placeholder="Report Name to filter the report catalog by."></input>
 
                 </div>
+                <div className="d-flex">
                 <button 
                     className={`btn btn-outline-primary m-2 w-50 ${accessToken ? "" : "disabled"}`} 
                     type="submit"
-                    disabled={!accessToken}
+                    disabled={!accessToken || isLoading}
                 
                 >Get Report Catalog</button>
+                {isLoading && <div className={`spinner-border m-auto ${styles.spinner}`}></div>}
+                
+
+
+                </div>
+                
 
         </form>
         {catalogError !== '' && 
-        <div className="alert alert-danger">{catalogError}</div>
+        <div className="alert alert-danger fw-light fs-5">{catalogError}</div>
         }
-        {catalogResponse &&
-            catalogResponse.map((el: InformationObject) => {
-                console.log(el)
-                return <p>HI</p>
-            })
+        {catalogResponse.length > 0 && 
+        <div className={`table-responsive ${styles.tableHeight}`}>
+            <table className="text-secondary table table-striped table-white fw-normal table-bordered border-secondary">
+            <thead className="bg-secondary text-white">
+                {['Report Name','Portfolio','Benchmark','Currency'].map(
+                    (key)=> {
+                        return <th className='fw-light fs-5 bg-secondary text-white'>{key}</th>
+                    }
+                )}
+            </thead>
+            <tbody>
+            {
+                catalogResponse.map((el: InformationObject, i : number) => {
+                    return (<tr className='fw-light fs-6 '>
+                        <td className='table-hover'>{el.reportName}</td>
+                        <td>{el.portfolio}</td>
+                        <td>{el.benchmark}</td>
+                        <td>{el.currency}</td>
+
+                    </tr>)
+                })
+            }
+
+            </tbody>
+            
+
+
+        </table>
+
+        </div>
+        
+            
         }
 
     </div>

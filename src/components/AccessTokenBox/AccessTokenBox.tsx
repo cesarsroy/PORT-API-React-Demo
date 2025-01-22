@@ -1,10 +1,18 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import ServerModeClient from '../../services/oauth';
 import styles from './AccessTokenBox.module.css'
 import { serverClientSecret, serverclientId } from '../../constants';
 
 const AccessTokenBox = ({onGettingToken} : {onGettingToken:(x:string)=>void}) => {
 
+    useEffect(
+        ()=>{
+            if (tokenStatus === TokenStatus.Existed ){
+                onGettingToken(originalToken || "")
+            }
+
+        }
+        ,[])
     enum TokenStatus {Undefined, Existed, Failed, Success}
     const originalToken = sessionStorage.getItem('accessToken')
 
@@ -13,11 +21,6 @@ const AccessTokenBox = ({onGettingToken} : {onGettingToken:(x:string)=>void}) =>
                                                 TokenStatus.Existed
                                                 :
                                                 TokenStatus.Undefined);
-    if (tokenStatus === TokenStatus.Existed ){
-        onGettingToken(originalToken || "")
-    }
-
-
     
     const client = new ServerModeClient(serverclientId,serverClientSecret);
 

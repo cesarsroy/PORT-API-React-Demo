@@ -50,7 +50,7 @@ async function getReportCatalog(body: CatalogFormData ,
             });
             
         console.debug(rawResponse)
-        const catalogResponse: InformationObject[] = rawResponse?.data?.reportInformation
+        catalogResponse = rawResponse?.data?.reportInformation
         console.info('Report information:')
         console.info(catalogResponse)
 
