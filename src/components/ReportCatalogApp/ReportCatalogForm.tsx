@@ -1,25 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {useForm} from 'react-hook-form';
 import styles from './ReportCatalogBox.module.css'
-import get_report_catalog, { CatalogFormData} from '../../services/reportCatalog';
+import getReportCatalog, { CatalogFormData, InformationObject} from '../../services/reportCatalog';
+import { Axios, AxiosError } from 'axios';
 
 
-const ReportCatalogForm = () => {
+const ReportCatalogForm = ({accessToken} : {accessToken: string}) => {
     
-    const {register, formState, handleSubmit} = useForm<CatalogFormData>()
+    const {register, formState, handleSubmit} = useForm<CatalogFormData>();
+    const [catalogResponse, setCatalogResponse] = useState<InformationObject[]>([]);
+    const [catalogError, setCatalogError] = useState('');
 
+    const onError = (err: AxiosError) => {
+        setCatalogError(err.message)
+    }
     const onCatalogSumbit = (data: CatalogFormData)=> {
+        setCatalogError('')
             console.log('The FORM has the following data')
             console.log(data)
             console.log('The FORM state is')
             console.log(formState)
-            const catalogResponse = get_report_catalog(data,
-                sessionStorage.getItem('accessToken')
+            async function executeSubmit() {
+                 const _catalogResponse = await getReportCatalog(data,
+                    accessToken,
+                    onError
+                    )
+                setCatalogResponse(_catalogResponse)
+                
 
-
-            )
-            console.info(catalogResponse)
-
+            }
+        executeSubmit();
+            
     };
     
   return (
@@ -47,9 +58,23 @@ const ReportCatalogForm = () => {
                     <input {...register('reportName')} className="form-control" type="text" placeholder="Report Name to filter the report catalog by."></input>
 
                 </div>
-                <button className="btn btn-outline-primary m-2 w-50" type="submit">Get Report Catalog</button>
+                <button 
+                    className={`btn btn-outline-primary m-2 w-50 ${accessToken ? "" : "disabled"}`} 
+                    type="submit"
+                    disabled={!accessToken}
+                
+                >Get Report Catalog</button>
 
         </form>
+        {catalogError !== '' && 
+        <div className="alert alert-danger">{catalogError}</div>
+        }
+        {catalogResponse &&
+            catalogResponse.map((el: InformationObject) => {
+                console.log(el)
+                return <p>HI</p>
+            })
+        }
 
     </div>
     

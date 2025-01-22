@@ -3,18 +3,19 @@ import ServerModeClient from '../../services/oauth';
 import styles from './AccessTokenBox.module.css'
 import { serverClientSecret, serverclientId } from '../../constants';
 
-const AccessTokenBox = () => {
+const AccessTokenBox = ({onGettingToken} : {onGettingToken:(x:string)=>void}) => {
 
     enum TokenStatus {Undefined, Existed, Failed, Success}
     const originalToken = sessionStorage.getItem('accessToken')
-    console.debug(`Access Token from storage: ${originalToken} `)
 
     const [alertVisible, setAlertVisible] = useState(true);
     const [tokenStatus, setTokenStatus] = useState(originalToken ? 
                                                 TokenStatus.Existed
                                                 :
                                                 TokenStatus.Undefined);
-
+    if (tokenStatus === TokenStatus.Existed ){
+        onGettingToken(originalToken || "")
+    }
 
 
     
@@ -27,6 +28,7 @@ const AccessTokenBox = () => {
         if (accessToken) { 
             sessionStorage.setItem('accessToken',accessToken)
             setTokenStatus(TokenStatus.Success)
+            onGettingToken(accessToken)
         }
         else {
             setTokenStatus(TokenStatus.Failed)
@@ -52,6 +54,7 @@ const AccessTokenBox = () => {
                         return <div className={`mt-2 alert alert-success ${fadeStylelogic}`}>Access Token Retrieved Successfully and saved in Local Storage</div>
             
                     case TokenStatus.Failed:
+                        clearTimeout(timeoutId);
                         return <div className={`mt-2 alert alert-danger ${fadeStylelogic}`}>Error retrieving token</div>
                     };
     }
