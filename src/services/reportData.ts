@@ -1,27 +1,23 @@
 import axios from 'axios'
 
 export interface ReportFormData{
-    portfolio: string,
-    reportName: string
+    reportInformation: {
+        portfolio: string,
+        reportName: string
+    }
+
     }
 
 
-async function get_report_data(body: ReportFormData , 
+async function getReportData(body: ReportFormData , 
                             accessToken: string | null
                         ) {
     
     if (accessToken == null) {
         throw new Error('You need an access token.')
     }
-    const catalogPath = 'https://api.bloomberg.com/enterprise/portfolio/report/data'
+    const dataPath = 'https://api.bloomberg.com/enterprise/portfolio/report/data'
 
-    for (const key in body) {
-
-        if (body[key] == '') {
-            console.debug(`Removing key ${key} from catalog body`)
-            delete body[key]
-        }
-    }
     const data: string = JSON.stringify(body)
 
     const headers = {
@@ -32,24 +28,25 @@ async function get_report_data(body: ReportFormData ,
     console.info('GET Request sent with this data and headers')
     console.info(data)
     console.info(headers)
-    const dataResponse = await axios.post(catalogPath,
+    const dataResponse = await axios.post(dataPath,
         { headers ,
-            data
+            body,
+            
         }
 
-        ).then((data) => {
-            console.log(`Report Catalog response:`)
-            console.log(data)
+        ).then((res) => {
+            console.log(`response:`)
+            console.log(res)
 
         }).catch(err => {
             console.log('Error occurred')
             console.log(err)
     })
-
-        return dataResponse
+    console.log('promised fulfilled')
+    return dataResponse
 
 
 }
 
 
-export default get_report_catalog
+export default getReportData

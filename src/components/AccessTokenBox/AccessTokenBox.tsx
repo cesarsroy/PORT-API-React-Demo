@@ -11,6 +11,8 @@ const AccessTokenBox = ({onGettingToken} : {onGettingToken:(x:string)=>void}) =>
                 onGettingToken(originalToken || "")
             }
 
+
+
         }
         ,[])
     enum TokenStatus {Undefined, Existed, Failed, Success}
@@ -42,10 +44,19 @@ const AccessTokenBox = ({onGettingToken} : {onGettingToken:(x:string)=>void}) =>
 
     function switchMessage(tokenStatus: TokenStatus) {
         const timeoutId = setTimeout(() => setAlertVisible(false),2000);
-        const fadeStylelogic = alertVisible ? "" :  [styles.alertHidden,styles.alertRemoved].join(" ")
+
+        if (alertVisible) {
+            setTimeout(()=>{
+                console.debug('Timing out the display none for the alert')
+                document.querySelector(`.${styles.alertHidden}`)?.classList.add(styles.alertRemoved)
+    
+            },2700)
+        }
+
+        const fadeStylelogic = alertVisible ? "" :  styles.alertHidden
             switch (tokenStatus) {
                     case TokenStatus.Existed :
-                        return <div className={`mt-2 alert alert-primary ${fadeStylelogic}`}>Access Token retrieved from storage</div>
+                        return <div className={`alert mt-2 alert-primary ${fadeStylelogic}`}>Access Token retrieved from storage</div>
                     case TokenStatus.Undefined :
                         clearTimeout(timeoutId);
                             return <div className="mt-2 alert position-relative alert-warning alert-dismissable show fade" role="alert">

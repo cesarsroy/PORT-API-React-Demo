@@ -18,7 +18,8 @@ interface CatalogResponseObject {
 
 async function getReportCatalog(body: CatalogFormData , 
                             accessToken: string | null,
-                            onError: (err: AxiosError)=>void
+                            onError: (err: AxiosError)=>void,
+                            axiosOptions?:Object
                         ):Promise<InformationObject[]> {
     
     if (accessToken == null) {
@@ -46,9 +47,10 @@ async function getReportCatalog(body: CatalogFormData ,
     try {
         const rawResponse = await axios.get<CatalogResponseObject>(catalogPath,
             { headers ,
-                params: body
+                params: body,
+                ...axiosOptions
             });
-            
+        console.debug('report catalog response')
         console.debug(rawResponse)
         catalogResponse = rawResponse?.data?.reportInformation
         console.info('Report information:')

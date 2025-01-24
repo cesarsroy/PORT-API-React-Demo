@@ -3,20 +3,27 @@ import {useForm} from 'react-hook-form';
 import styles from './ReportCatalogBox.module.css'
 import getReportCatalog, { CatalogFormData, InformationObject} from '../../services/reportCatalog';
 import { Axios, AxiosError } from 'axios';
+import TrashIcon from './TrashIcon';
 
+interface Props {
+    accessToken: string,
+    reportCatalog: InformationObject[],
+    onCatalogUpdate: (data:InformationObject[])=>void
+}
 
-const ReportCatalogForm = ({accessToken} : {accessToken: string}) => {
+const ReportCatalogBox = ({accessToken, reportCatalog, onCatalogUpdate} : Props) => {
     
     const {register, formState, handleSubmit} = useForm<CatalogFormData>();
-    const [catalogResponse, setCatalogResponse] = useState<InformationObject[]>([]);
+
     const [catalogError, setCatalogError] = useState('');
     const [isLoading, setIsLoading] = useState(false)
+
     const onError = (err: AxiosError) => {
         setCatalogError(JSON.stringify(err?.response?.data || {}))
     }
     const onCatalogSumbit = (data: CatalogFormData)=> {
         setCatalogError('')
-        setCatalogResponse([])
+        onCatalogUpdate([])
         
         setIsLoading(true)
         console.log('The FORM has the following data')
@@ -26,15 +33,14 @@ const ReportCatalogForm = ({accessToken} : {accessToken: string}) => {
         async function executeSubmit() {
                 const _catalogResponse = await getReportCatalog(data,
                 accessToken,
-                onError
+                onError,
                 )
-            setCatalogResponse([..._catalogResponse])
+            onCatalogUpdate([..._catalogResponse])
             setIsLoading(false)
             
-
+        
         }
         executeSubmit();
-        
             
     };
     
@@ -78,39 +84,58 @@ const ReportCatalogForm = ({accessToken} : {accessToken: string}) => {
                 
 
         </form>
+
         {catalogError !== '' && 
-        <div className="alert alert-danger fw-light fs-5">{catalogError}</div>
+        <div className="alert alert-danger fw-light fs-5">
+            <span className={`d-block fs-6 fw-lighter`}>There was an error</span>
+            {catalogError}
+            </div>
         }
-        {catalogResponse.length > 0 && 
-        <div className={`table-responsive ${styles.tableHeight}`}>
-            <table className="text-secondary table table-striped table-white fw-normal table-bordered border-secondary">
-            <thead className="bg-secondary text-white">
-                {['Report Name','Portfolio','Benchmark','Currency'].map(
-                    (key)=> {
-                        return <th className='fw-light fs-5 bg-secondary text-white'>{key}</th>
-                    }
-                )}
-            </thead>
-            <tbody>
-            {
-                catalogResponse.map((el: InformationObject, i : number) => {
-                    return (<tr className='fw-light fs-6 '>
-                        <td className='table-hover'>{el.reportName}</td>
-                        <td>{el.portfolio}</td>
-                        <td>{el.benchmark}</td>
-                        <td>{el.currency}</td>
+        {reportCatalog.length > 0 && 
+        <div className={`position-relative`}>
+            <button
+                onClick={()=> {
+                    onCatalogUpdate([])
+                }}
+                className={`btn position-absolute btn-outline-danger ${styles.tableDeleteBtn}`}>
+                    <TrashIcon/>
+            </button>
+            <div className={`${styles.tableHeight}`}>
+                <table className="table">
+                <thead className="border-bottom border-dark bg-dark text-white">
+                    <tr>
+                    {['Report Name','Portfolio','Benchmark','Currency'].map(
+                        (key)=> {
+                            return <th className='fw-light fs-5 p-2 ps-4'>{key}</th>
+                        }
+                    )}
+                    </tr>
+                </thead>
+                <tbody className='mt-2'>
+                {
+                    reportCatalog.map((el: InformationObject, i : number) => {
+                        return (<tr className='fw-lighter fs-6 table-hover'>
+                            <td className='ps-4'>{el.reportName}</td>
+                            <td className='ps-4'>{el.portfolio}</td>
+                            <td className='ps-4'>{el.benchmark}</td>
+                            <td className='ps-4'>{el.currency}</td>
 
-                    </tr>)
-                })
-            }
+                        </tr>)
+                    })
+                }
 
-            </tbody>
+                </tbody>
             
 
 
-        </table>
+            </table>
+
+
+            </div>
+            
 
         </div>
+        
         
             
         }
@@ -120,4 +145,4 @@ const ReportCatalogForm = ({accessToken} : {accessToken: string}) => {
   )
 }
 
-export default ReportCatalogForm
+export default ReportCatalogBox
