@@ -7,11 +7,11 @@ import { InformationObject } from "../../services/reportCatalog";
 
 interface Props {
   accessToken: string;
-  reportCatalog: InformationObject[];
+  reportCatalog?: InformationObject[];
 }
 
-const ReportDataBox = ({ accessToken, reportCatalog }: Props) => {
-  const { register, formState, handleSubmit } = useForm();
+const ReportDataBox = ({ accessToken }: Props) => {
+  //   const { register, formState, handleSubmit } = useForm();
 
   const callData = () => {
     const body = {
