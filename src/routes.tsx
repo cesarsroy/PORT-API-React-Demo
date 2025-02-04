@@ -1,6 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "./pages/Layout";
-import Report from "./pages/Report";
+import ReportPage from "./pages/ReportPage";
+import WorkflowPage from "./pages/WorkflowPage";
+import OptimizerPage from "./pages/OptimizerPage";
 
 const router = createBrowserRouter([
   {
@@ -9,15 +11,15 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Report />,
+        element: <ReportPage />,
       },
       {
         path: "/workflow",
-        element: <h1>workflow</h1>,
+        element: <WorkflowPage />,
       },
       {
         path: "/optimizer",
-        element: <h1>optimizer</h1>,
+        element: <OptimizerPage />,
       },
     ],
   },

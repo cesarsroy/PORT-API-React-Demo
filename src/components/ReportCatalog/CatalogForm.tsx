@@ -1,45 +1,19 @@
-import { AxiosError } from "axios";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
-import getReportCatalog, {
-  CatalogFormData,
-  InformationObject,
-} from "../../services/reportCatalog";
+import { CatalogFormData } from "../../services/reportCatalog";
 import styles from "./ReportCatalog.module.css";
 import AccessTokenContext from "../../contexts/accessTokenContext";
 
 interface Props {
-  setCatalogError: (err: string) => void;
-  setReportCatalog: (data: InformationObject[]) => void;
+  updateCatalogQuery: (d: CatalogFormData) => void;
 }
 
-const CatalogForm = (props: Props) => {
+const CatalogForm = ({ updateCatalogQuery }: Props) => {
+  const { register, getValues } = useForm<CatalogFormData>();
   const { token } = useContext(AccessTokenContext);
-  const [isLoading, setIsLoading] = useState(false);
-  const { register, formState, handleSubmit } = useForm<CatalogFormData>();
-
-  const onError = (err: AxiosError) => {
-    props.setCatalogError(JSON.stringify(err?.response?.data || {}));
-  };
-  const onCatalogSumbit = (data: CatalogFormData) => {
-    props.setCatalogError("");
-    props.setReportCatalog([]);
-
-    setIsLoading(true);
-    console.log("The FORM has the following data");
-    console.log(data);
-    console.log("The FORM state is");
-    console.log(formState);
-    async function executeSubmit() {
-      const _catalogResponse = await getReportCatalog(data, token, onError);
-      props.setReportCatalog([..._catalogResponse]);
-      setIsLoading(false);
-    }
-    executeSubmit();
-  };
 
   return (
-    <form onSubmit={handleSubmit(onCatalogSumbit)}>
+    <form>
       <div className="input-group m-2">
         <span className={`input-group-text ${styles.wideInputText}`}>
           {" "}
@@ -90,17 +64,17 @@ const CatalogForm = (props: Props) => {
       </div>
       <div className="d-flex">
         <button
-          className={`btn btn-outline-primary m-2 w-50 ${
-            token ? "" : "disabled"
-          }`}
-          type="submit"
-          disabled={!token || isLoading}
+          className={`btn btn-outline-primary m-2 ${token ? "" : "disabled"}`}
+          type="button"
+          disabled={!token}
+          onClick={(event) => {
+            event.preventDefault();
+            const currenFormData = getValues();
+            updateCatalogQuery(currenFormData);
+          }}
         >
           Get Report Catalog
         </button>
-        {isLoading && (
-          <div className={`spinner-border m-auto ${styles.spinner}`}></div>
-        )}
       </div>
     </form>
   );

@@ -15,4 +15,9 @@
     top:-45px;
     right:15px;
     z-index: 99999;
+    width: 40px
+}
+
+button {
+    width:300px
 }

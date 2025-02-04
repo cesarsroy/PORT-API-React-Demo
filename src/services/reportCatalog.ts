@@ -1,4 +1,4 @@
-import axios, { Axios, AxiosError } from 'axios'
+import axios, { AxiosError, AxiosRequestConfig } from 'axios'
 
 export interface CatalogFormData {
     [key: string]: string,
@@ -15,14 +15,19 @@ interface CatalogResponseObject {
     reportInformation: InformationObject[]
 }
 
+export interface GetCatalogDataArgs {
+    body: CatalogFormData;
+    token: string | null;
+    onError?: (err: AxiosError)=>void;
+    axiosOptions?:AxiosRequestConfig;
+}
 
-async function getReportCatalog(body: CatalogFormData , 
-                            accessToken: string | null,
-                            onError: (err: AxiosError)=>void,
-                            axiosOptions?:Object
-                        ):Promise<InformationObject[]> {
-    
-    if (accessToken == null) {
+const getReportCatalog = async ({body, 
+                token,
+                axiosOptions}: GetCatalogDataArgs
+        )=> {
+    console.debug('Starting to get report info')
+    if (token == null || body == null) {
         throw new Error('You need an access token.')
     }
     const catalogPath = 'https://api.bloomberg.com/enterprise/portfolio/report/info'
@@ -30,46 +35,27 @@ async function getReportCatalog(body: CatalogFormData ,
     for (const [key, item] of Object.entries(body)) {
 
         if (item == '') {
-            console.debug(`Removing key ${key} from catalog body`)
             delete body[key]
         }
     }
 
     const headers = {
         "Content-Type": "application/json",
-        'Authorization':'Bearer ' + accessToken
+        'Authorization':'Bearer ' + token
     };
 
-    console.info('GET Request sent with this body and headers')
-    console.info(body)
-    console.info(headers)
-    let catalogResponse: InformationObject[] = []
-    try {
-        const rawResponse = await axios.get<CatalogResponseObject>(catalogPath,
-            { headers ,
-                params: body,
-                ...axiosOptions
-            });
-        console.debug('report catalog response')
-        console.debug(rawResponse)
-        catalogResponse = rawResponse?.data?.reportInformation
-        console.info('Report information:')
-        console.info(catalogResponse)
-
-        } catch (error) {
-            console.error('Error getting the report catalog.')
-            console.error(error)
-            if (error instanceof AxiosError) {
-                onError(error)
-
-            }
-
-        }
-
-    return catalogResponse
-
-
+    console.debug('GET Request sent with this body and headers')
+    console.debug(body)
+    console.debug(headers)
+    return await axios.get<CatalogResponseObject>(catalogPath,
+        { headers ,
+            params: body,
+            ...axiosOptions
+        }).then(res => {
+            console.log('Catalog response data object')
+            console.log(res.data)
+            return res?.data?.reportInformation})
+    
 }
 
-
-export default getReportCatalog
+export default getReportCatalog;

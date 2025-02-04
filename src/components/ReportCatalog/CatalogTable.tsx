@@ -1,22 +1,55 @@
-import React from "react";
-import reportCatalog, { InformationObject } from "../../services/reportCatalog";
+import {
+  CatalogFormData,
+  InformationObject,
+} from "../../services/reportCatalog";
 import TrashIcon from "./TrashIcon";
 import styles from "./ReportCatalog.module.css";
+import useReportCatalog from "../../hooks/useReportCatalog";
+import { useContext } from "react";
+import AccessTokenContext from "../../contexts/accessTokenContext";
+import { AxiosError } from "axios";
 
 interface Props {
-  setReportCatalog: (data: InformationObject[]) => void;
-  reportCatalog: InformationObject[];
+  catalogQuery: CatalogFormData;
 }
 
-const CatalogTable = (props: Props) => {
+const CatalogTable = ({ catalogQuery }: Props) => {
+  const { token } = useContext(AccessTokenContext);
+  const isEnabled = Object.keys(catalogQuery).length > 0;
+  console.log("Is enabled?", [isEnabled, catalogQuery]);
+
+  const {
+    data: reportCatalog,
+    isLoading,
+    error,
+  } = useReportCatalog({ catalogBody: catalogQuery, token, isEnabled });
+
+  // {catalogError !== "" && (
+  //   <div className="alert alert-danger fw-light fs-5">
+  //     <span className={`d-block fs-6 fw-lighter`}>There was an error</span>
+  //     {catalogError}
+  //   </div>
+  // )}
+
   return (
     <>
-      {props.reportCatalog.length > 0 && (
+      {isLoading && (
+        <div className="d-flex">
+          <div className={`spinner-border m-auto ${styles.spinner}`}></div>
+        </div>
+      )}{" "}
+      {error != undefined && (
+        <div className="alert alert-danger fw-light fs-5">
+          <span className={`d-block fs-6 fw-lighter`}>There was an error</span>
+          {error instanceof AxiosError
+            ? JSON.stringify(error.response?.data)
+            : error.message}
+        </div>
+      )}
+      {reportCatalog != undefined && (
         <div className={`position-relative`}>
           <button
-            onClick={() => {
-              props.setReportCatalog([]);
-            }}
+            onClick={() => {}}
             className={`btn position-absolute btn-outline-danger ${styles.tableDeleteBtn}`}
           >
             <TrashIcon />
@@ -37,7 +70,7 @@ const CatalogTable = (props: Props) => {
                 </tr>
               </thead>
               <tbody className="mt-2">
-                {props.reportCatalog.map((el: InformationObject, i: number) => {
+                {reportCatalog.map((el: InformationObject, i: number) => {
                   return (
                     <tr key={i} className="fw-lighter fs-6 table-hover">
                       <td className="ps-4">{el.reportName}</td>

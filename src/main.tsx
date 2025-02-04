@@ -6,7 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import router from "./routes";
-import AccessTokenBox from "./components/AccessTokenBox";
+import AccessTokenBox from "./components/AccessToken";
 import AccessTokenContext, {
   AccessTokenContextType,
 } from "./contexts/accessTokenContext";

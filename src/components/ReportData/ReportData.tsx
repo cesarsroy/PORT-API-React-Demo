@@ -1,18 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import styles from "./ReportCatalogBox.module.css";
-import getReportData, { ReportFormData } from "../../services/reportData";
-import { Axios, AxiosError } from "axios";
+import getReportData from "../../services/reportData";
 import { InformationObject } from "../../services/reportCatalog";
+import { useContext } from "react";
+import AccessTokenContext from "../../contexts/accessTokenContext";
 
-interface Props {
-  accessToken: string;
-  reportCatalog?: InformationObject[];
-}
-
-const ReportDataBox = ({ accessToken }: Props) => {
+const ReportDataBox = () => {
   //   const { register, formState, handleSubmit } = useForm();
-
+  const { token } = useContext(AccessTokenContext);
   const callData = () => {
     const body = {
       reportInformation: {
@@ -20,8 +13,8 @@ const ReportDataBox = ({ accessToken }: Props) => {
         reportName: "POPAPI_DEMO_TE",
       },
     };
-    console.log("Token before data", accessToken);
-    getReportData(body, accessToken).then((d) => console.log(d));
+    console.log("Token before data", token);
+    getReportData(body, token).then((d) => console.log(d));
   };
 
   return (

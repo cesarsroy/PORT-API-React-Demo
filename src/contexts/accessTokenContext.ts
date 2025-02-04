@@ -5,6 +5,6 @@ export interface AccessTokenContextType {
     setToken: (x:string)=>void
 }
 
-const AccessTokenContext = React.createContext<AccessTokenContextType>({} as AccessTokenContextType)
+const AccessTokenContext = React.createContext<AccessTokenContextType>({token: ""} as AccessTokenContextType)
 
 export default AccessTokenContext

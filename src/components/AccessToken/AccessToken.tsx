@@ -1,10 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import ServerModeClient from "../../services/oauth";
-import styles from "./AccessTokenBox.module.css";
+import styles from "./AccessToken.module.css";
 import { serverClientSecret, serverclientId } from "../../constants";
 import AccessTokenContext from "../../contexts/accessTokenContext";
 
-const AccessTokenBox = () => {
+const AccessToken = () => {
   const { token, setToken } = useContext(AccessTokenContext);
   enum TokenStatus {
     Undefined,
@@ -49,7 +49,7 @@ const AccessTokenBox = () => {
       case TokenStatus.Existed:
         return (
           <div className={`alert mt-2 alert-primary ${fadeStylelogic}`}>
-            Access Token retrieved from storage
+            Access Token Retrieved from State.
           </div>
         );
       case TokenStatus.Undefined:
@@ -59,7 +59,7 @@ const AccessTokenBox = () => {
             className="mt-2 alert position-relative alert-warning alert-dismissable show fade"
             role="alert"
           >
-            Request Access Token Before Continuing
+            Request Access Token Before Continuing.
             <button
               type="button"
               className="btn-close position-absolute end-0 me-4"
@@ -71,7 +71,7 @@ const AccessTokenBox = () => {
       case TokenStatus.Success:
         return (
           <div className={`mt-2 alert alert-success ${fadeStylelogic}`}>
-            Access Token Retrieved Successfully and saved in Local Storage
+            Access Token Retrieved Successfully.
           </div>
         );
 
@@ -79,7 +79,7 @@ const AccessTokenBox = () => {
         clearTimeout(timeoutId);
         return (
           <div className={`mt-2 alert alert-danger ${fadeStylelogic}`}>
-            Error retrieving token
+            Error retrieving token.
           </div>
         );
     }
@@ -100,4 +100,4 @@ const AccessTokenBox = () => {
   );
 };
 
-export default AccessTokenBox;
+export default AccessToken;
