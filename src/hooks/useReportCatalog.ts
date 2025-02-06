@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
 import getReportCatalog, { CatalogFormData, InformationObject } from '../services/reportCatalog'
 import { AxiosRequestConfig } from 'axios';
 
@@ -8,6 +8,18 @@ interface Query {
     token: string;
     axiosOptions?: AxiosRequestConfig
 }
+
+export const serializeBody = (body: CatalogFormData)=>{
+    const arr = []
+
+    if (Object.entries(body).length === 0) return [""]
+    else {
+        for (const k of ["portfolio","currency","benchmark","reportName"]) {
+            arr.push(body[k] || "")
+        }
+        return arr
+    }}
+
 const useReportCatalog = ({catalogBody,
                         token ,
                         isEnabled,
@@ -29,9 +41,11 @@ const useReportCatalog = ({catalogBody,
         }
         return getReportCatalog({body: catalogBody, token, axiosOptions})
     }
+
+
   return useQuery<InformationObject[],Error, InformationObject[]>(
     {
-        queryKey: ["reportCatalog",catalogBody],
+        queryKey: ["reportCatalog",...serializeBody(catalogBody)],
         queryFn: queryFunction,
         retry: false,
         staleTime: 1000 * 60 * 60,  // 1h
@@ -39,5 +53,6 @@ const useReportCatalog = ({catalogBody,
     }
   )
 }
+
 
 export default useReportCatalog

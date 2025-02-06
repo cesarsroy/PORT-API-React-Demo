@@ -31,11 +31,11 @@ const getReportCatalog = async ({body,
         throw new Error('You need an access token.')
     }
     const catalogPath = 'https://api.bloomberg.com/enterprise/portfolio/report/info'
-
+    const bodyCopy : CatalogFormData = {} as CatalogFormData
     for (const [key, item] of Object.entries(body)) {
 
-        if (item == '') {
-            delete body[key]
+        if (item != '') {
+            bodyCopy[key] = item
         }
     }
 

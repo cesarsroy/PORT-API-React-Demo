@@ -4,10 +4,11 @@ import {
 } from "../../services/reportCatalog";
 import TrashIcon from "./TrashIcon";
 import styles from "./ReportCatalog.module.css";
-import useReportCatalog from "../../hooks/useReportCatalog";
-import { useContext } from "react";
+import useReportCatalog, { serializeBody } from "../../hooks/useReportCatalog";
+import { useContext, useState } from "react";
 import AccessTokenContext from "../../contexts/accessTokenContext";
 import { AxiosError } from "axios";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   catalogQuery: CatalogFormData;
@@ -16,7 +17,7 @@ interface Props {
 const CatalogTable = ({ catalogQuery }: Props) => {
   const { token } = useContext(AccessTokenContext);
   const isEnabled = Object.keys(catalogQuery).length > 0;
-  console.log("Is enabled?", [isEnabled, catalogQuery]);
+  console.debug("Is enabled?", [isEnabled, catalogQuery]);
 
   const {
     data: reportCatalog,
@@ -24,12 +25,9 @@ const CatalogTable = ({ catalogQuery }: Props) => {
     error,
   } = useReportCatalog({ catalogBody: catalogQuery, token, isEnabled });
 
-  // {catalogError !== "" && (
-  //   <div className="alert alert-danger fw-light fs-5">
-  //     <span className={`d-block fs-6 fw-lighter`}>There was an error</span>
-  //     {catalogError}
-  //   </div>
-  // )}
+  const queryclient = useQueryClient();
+
+  console.debug("There is an error", error);
 
   return (
     <>
@@ -46,10 +44,18 @@ const CatalogTable = ({ catalogQuery }: Props) => {
             : error.message}
         </div>
       )}
-      {reportCatalog != undefined && (
+      {reportCatalog != undefined && reportCatalog.length > 0 && (
         <div className={`position-relative`}>
           <button
-            onClick={() => {}}
+            onClick={() => {
+              queryclient.setQueryData(
+                ["reportCatalog", ...serializeBody(catalogQuery)],
+                () => []
+              );
+              queryclient.invalidateQueries({
+                queryKey: ["reportCatalog", ...serializeBody(catalogQuery)],
+              });
+            }}
             className={`btn position-absolute btn-outline-danger ${styles.tableDeleteBtn}`}
           >
             <TrashIcon />
