@@ -8,6 +8,27 @@
     overflow-y: scroll;
 }
 
+.jsonHeight {
+    max-height: 500px;
+    overflow-y: scroll;
+}
+
+.clickable {
+    cursor: pointer
+}
+
+.jsonHidden {
+    transition:all 1s;
+    opacity: 0;
+
+}
+
+.jsonShown {
+    display:block;
+    opacity: 1;
+
+}
+
 .spinner {
     color:rgb(17, 130, 208,0.5)}
 

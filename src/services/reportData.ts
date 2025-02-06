@@ -1,10 +1,17 @@
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 
-export interface ReportFormData{
+export interface ReportDataBody{
+    [key:string]: any;
     reportInformation: {
-        portfolio: string,
-        reportName: string
-    }
+        portfolio: string;
+        reportName: string;
+        benchmark?: string;
+        currency?: string;
+        classification?: string;
+    };
+    classificationLevels?: string[];
+    dates?: string[];
+    columns?:string[];
 
     }
 
@@ -43,26 +50,33 @@ function toDataRecords(dataColumns:DataColumn[] ) {
 
 }
 
-async function getReportData(body: ReportFormData , 
-                            accessToken: string | null
+interface getReportDataArgs {
+    body: ReportDataBody , 
+    token: string | null,
+    axiosOptions?:AxiosRequestConfig
+}
+
+async function getReportData({body,
+                            token,
+                            axiosOptions}: getReportDataArgs
                         ) {
     
-    if (!accessToken) {
+    if (!token) {
         throw new Error('You need an access token.')
     }
     const dataPath = 'https://api.bloomberg.com/enterprise/portfolio/report/data'
 
     const headers = {
         "Content-Type": "application/json",
-        'Authorization':'Bearer ' + accessToken
+        'Authorization':'Bearer ' + token
     };
 
     console.info('GET Request sent with this data and headers')
     console.info(body)
     console.info(headers)
-    const dataResponse = await axios.post(dataPath,
+    return axios.post(dataPath,
         body,
-        {headers}
+        {...axiosOptions,headers}
 
         ).then((res) => {
             console.log(`Raw report data response:`)
@@ -70,14 +84,10 @@ async function getReportData(body: ReportFormData ,
             const jsonStrings = parseMultiPartData(res.data)
             const records = jsonStrings.map(s=> toDataRecords(JSON.parse(s).dataColumns))
             const allRecords = records.reduce((acc, arr) => acc.concat(arr),[])
+            console.debug('data records from pedl',allRecords)
             return allRecords
 
-        }).catch(err => {
-            console.log('Error occurred')
-            console.log(err)
-    })
-    console.log('promised fulfilled')
-    return dataResponse
+        })
 
 
 }

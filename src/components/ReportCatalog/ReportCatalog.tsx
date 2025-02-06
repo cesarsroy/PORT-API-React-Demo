@@ -10,8 +10,6 @@ const ReportCatalog = () => {
   const [catalogQuery, setCatalogQuery] = useState<CatalogFormData>(
     {} as CatalogFormData
   );
-  console.log(catalogQuery);
-
   return (
     <div className="h4 text-secondary mt-3 pt-2 border-top border-secondary">
       Report Catalog Example

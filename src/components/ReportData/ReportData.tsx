@@ -1,33 +1,26 @@
-import getReportData from "../../services/reportData";
-import { InformationObject } from "../../services/reportCatalog";
-import { useContext } from "react";
-import AccessTokenContext from "../../contexts/accessTokenContext";
+import { useContext, useState } from "react";
+import ReportDataForm from "./ReportDataForm";
+import ReportDataOutput from "./ReportDataOutput";
 
-const ReportDataBox = () => {
-  //   const { register, formState, handleSubmit } = useForm();
-  const { token } = useContext(AccessTokenContext);
-  const callData = () => {
-    const body = {
-      reportInformation: {
-        portfolio: "POPAPI_ALM_DEMO",
-        reportName: "POPAPI_DEMO_TE",
-      },
-    };
-    console.log("Token before data", token);
-    getReportData(body, token).then((d) => console.log(d));
-  };
+const ReportData = () => {
+  const [reportQuery, setReportQuery] = useState<ReportDataForm>({
+    portfolio: "MYR-IEQ",
+    reportName: "AIM_TE",
+    date: "2024-09-30",
+  } as ReportDataForm);
 
   return (
     <div className="h4 text-secondary mt-3 pt-2 border-top border-secondary">
       Report Data Example
       <p className="fst-italic fw-normal h6 pt-2">
-        Use this to retrieve the actual report data.
+        Use this to retrieve the actual report data corresponding to a report
       </p>
-      <button className="btn btn-success" onClick={() => callData()}>
-        Run
-      </button>
+      <ReportDataForm
+        updateReportDataQuery={(d: ReportDataForm) => setReportQuery(d)}
+      />
+      <ReportDataOutput reportQuery={reportQuery} />
     </div>
   );
 };
 
-export default ReportDataBox;
+export default ReportData;
