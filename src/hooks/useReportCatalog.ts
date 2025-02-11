@@ -1,4 +1,4 @@
-import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import getReportCatalog, { CatalogFormData, InformationObject } from '../services/reportCatalog'
 import { AxiosRequestConfig } from 'axios';
 

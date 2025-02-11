@@ -1,14 +1,14 @@
 import axios from 'axios'
 import { iClient } from './oauth';
 
-interface BSSODeviceModePollResponse {
-    data: {
-        access_token: string;
-        expires_in: number;
+// interface BSSODeviceModePollResponse {
+//     data: {
+//         access_token: string;
+//         expires_in: number;
 
-    }
+//     }
 
-}
+// }
 
 interface BSSODeviceModeStartResponse {
     data: {user_code: string,

@@ -1,8 +1,5 @@
 import { useState } from "react";
-import {
-  CatalogFormData,
-  InformationObject,
-} from "../../services/reportCatalog";
+import { CatalogFormData } from "../../services/reportCatalog";
 import CatalogForm from "./CatalogForm";
 import CatalogTable from "./CatalogTable";
 
@@ -21,7 +18,10 @@ const ReportCatalog = () => {
           setCatalogQuery(newFormData)
         }
       />
-      <CatalogTable catalogQuery={catalogQuery} />
+      <CatalogTable
+        catalogQuery={catalogQuery}
+        resetCatalogQuery={() => setCatalogQuery({} as CatalogFormData)}
+      />
     </div>
   );
 };

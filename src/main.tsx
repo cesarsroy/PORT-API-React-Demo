@@ -6,10 +6,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import router from "./routes";
-import AccessTokenBox from "./components/AccessToken";
-import AccessTokenContext, {
-  AccessTokenContextType,
-} from "./contexts/accessTokenContext";
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(

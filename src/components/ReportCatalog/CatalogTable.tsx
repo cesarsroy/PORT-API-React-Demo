@@ -4,17 +4,17 @@ import {
 } from "../../services/reportCatalog";
 import TrashIcon from "./TrashIcon";
 import styles from "./ReportCatalog.module.css";
-import useReportCatalog, { serializeBody } from "../../hooks/useReportCatalog";
+import useReportCatalog from "../../hooks/useReportCatalog";
 import { useContext } from "react";
 import AccessTokenContext from "../../contexts/accessTokenContext";
 import { AxiosError } from "axios";
-import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   catalogQuery: CatalogFormData;
+  resetCatalogQuery: () => void;
 }
 
-const CatalogTable = ({ catalogQuery }: Props) => {
+const CatalogTable = ({ catalogQuery, resetCatalogQuery }: Props) => {
   const { token } = useContext(AccessTokenContext);
   const isEnabled = Object.keys(catalogQuery).length > 0;
   // console.debug("Is enabled?", [isEnabled, catalogQuery]);
@@ -24,8 +24,6 @@ const CatalogTable = ({ catalogQuery }: Props) => {
     isLoading,
     error,
   } = useReportCatalog({ catalogBody: catalogQuery, token, isEnabled });
-
-  const queryclient = useQueryClient();
 
   // console.debug("There is an error", error);
 
@@ -47,15 +45,7 @@ const CatalogTable = ({ catalogQuery }: Props) => {
       {reportCatalog != undefined && reportCatalog.length > 0 && (
         <div className={`position-relative`}>
           <button
-            onClick={() => {
-              queryclient.setQueryData(
-                ["reportCatalog", ...serializeBody(catalogQuery)],
-                () => []
-              );
-              queryclient.invalidateQueries({
-                queryKey: ["reportCatalog", ...serializeBody(catalogQuery)],
-              });
-            }}
+            onClick={() => resetCatalogQuery()}
             className={`btn position-absolute btn-outline-danger ${styles.tableDeleteBtn}`}
           >
             <TrashIcon />

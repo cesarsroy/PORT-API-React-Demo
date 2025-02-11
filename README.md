@@ -1,50 +1,27 @@
-# React + TypeScript + Vite
+# React TypeScript PORT API Demo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+- This project contains a React application written in Typescript to show the different client-facing endpoints of Bloomberg PORT Enterprise API.
+  - Only enterprise clients that subscribe to the full PORT Enterprise package will be able to access the API.
+- The application is only for demonstration purposes. It is not meant to be used for any other purpose.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Technology Used
 
-## Expanding the ESLint configuration
+- The project uses some react open source packages and axios for the https requests.
+- react-query is used to wrap the axios requests and offer server state management (caching and error handling)
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Manual Deployment
 
-- Configure the top-level `parserOptions` property like this:
+- Install nodejs and npm in your computer.
+- Copy all the files into a directory and navigate from the command console to that directory.
+- Then run `npm install`
+- To test the application in development mode run `npm run dev`.
+- ** Make sure you open the http://localhost address in a web browser that has the CORS policy disabled. ** Otherwise the web browser will block the requests because PORT API endpoints do not whitelist all domains for Cross Origin requests.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Docker Deployment
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+- You can simply use the `Dockerfile` in the project to build an image and run a container.
+- Make sure you have docker installed in your computer. Then run
+- `docker build -t port-api-react .` to build an image the the name port-api-react
+- `docker run -p 3000:3000 port-api-react` to run the container exposing the port 3000 in the host machine.
