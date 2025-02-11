@@ -8,8 +8,13 @@
 
 ## Technology Used
 
-- The project uses some react open source packages and axios for the https requests.
+- The project uses some react open source packages and `axios` for the https requests.
 - react-query is used to wrap the axios requests and offer server state management (caching and error handling)
+
+## Client Secrets
+
+- PORT API uses Oauth2 for authentication which requires to create a Bearer token with a clientId and a clientSecret.
+- The application will force the user to copy these in a form inside the app. Once they generate the token once; the id and secret gets stored in the local storage of the web browser used for ease of use.
 
 ## Manual Deployment
 
